@@ -33,10 +33,6 @@ public class PlayerEntity : AEntity {
         SetCurrentHP(MaxHP);
         SetCurrentSP(MaxSP);
         SetCurrentArmor(PlayerArmor);
-
-        // add player to list
-        if (isServer)
-            Chaser.Get.AddPlayer(GetComponent<PlayerEntity>());
     }
     private void Jump()
     {
@@ -71,12 +67,5 @@ public class PlayerEntity : AEntity {
     private void RpcBecomeChaser()
     {
 
-    }
-
-    private void OnDestroy()
-    {
-        if (isServer)
-            Chaser.Get.RemovePlayer(GetComponent<PlayerEntity>());
-        OnNetworkDestroy();
     }
 }

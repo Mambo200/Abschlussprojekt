@@ -5,12 +5,10 @@ using UnityEngine.Networking;
 
 public class MyLobbyManager : NetworkLobbyManager {
 
-    public static NetworkLobbyPlayer[] GetSingleton { get { return ((MyLobbyManager)singleton).lobbySlots; } }
-    private void Start()
-    {
-        GetSingleton[0].GetComponent<PlayerEntity>().ch
-        //((MyLobbyManager)singleton).lobbySlots;
-    }
+    /// <summary>Get every Player in Lobby</summary>
+    public static NetworkLobbyPlayer[] GetSingletonPlayer { get { return ((MyLobbyManager)singleton).lobbySlots; } }
+    /// <summary>Get Networkmanager Singleton</summary>
+    public static NetworkManager GetSingleton { get { return singleton; } }
 
     public override void OnLobbyClientEnter()
     {
