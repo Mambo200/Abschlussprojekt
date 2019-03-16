@@ -12,7 +12,7 @@ public abstract class AEntity : NetworkBehaviour
     /// <summary>Max HP variable (DO NOT USE! USE <see cref="MaxHP"/> INSTEAD)</summary>
     [SyncVar]
     private float maxHP = 150;
-    /// <summary>Max HP property (Everyone can get, only Server can set)</summary>
+    /// <summary>Max HP property (Everyone can get, only Server can set in <see cref="SetMaxHP(float)"/>)</summary>
     public float MaxHP
     {
         get { return maxHP; }
@@ -20,7 +20,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set Max HP to " + value);
+                Debug.Log("Client tried to set Max HP to " + value, this.gameObject);
                 return;
             }
 
@@ -29,10 +29,11 @@ public abstract class AEntity : NetworkBehaviour
             AfterMaxHPChanged();
         }
     }
+
     /// <summary>Current HP variable (DO NOT USE! USE <see cref="CurrentHP"/> INSTEAD)</summary>
     [SyncVar]
     private float currentHP;
-    /// <summary>Current HP property (Everyone can get, only Server can set)</summary>
+    /// <summary>Current HP property (Everyone can get, only Server can set is <see cref="SetCurrentHP(float)"/></summary>
     public float CurrentHP
     {
         get { return currentHP; }
@@ -41,7 +42,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set current HP to " + value);
+                Debug.Log("Client tried to set current HP to " + value, this.gameObject);
                 return;
             }
 
@@ -50,10 +51,11 @@ public abstract class AEntity : NetworkBehaviour
             AfterCurrentHPChanged();
         }
     }
+
     /// <summary>Max SP variable (DO NOT USE! USE <see cref="MaxSP"/> INSTEAD)</summary>
     [SyncVar]
     private float maxSP = 150;
-    /// <summary>Max SP property (Everyone can get, only Server can set)</summary>
+    /// <summary>Max SP property (Everyone can get, only Server can set in <see cref="SetMaxSP(float)"/>)</summary>
     public float MaxSP
     {
         get { return maxSP; }
@@ -61,7 +63,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set current SP to " + value);
+                Debug.Log("Client tried to set current SP to " + value, this.gameObject);
                 return;
             }
 
@@ -73,10 +75,11 @@ public abstract class AEntity : NetworkBehaviour
         /// <summary>Max HP property (Everyone can get, only Server can set)</summary>
     /// <summary>Max HP property (Everyone can get, only Server can set)</summary>
     }
+
     /// <summary>Current SP variable (DO NOT USE! USE <see cref="CurrentSP"/> INSTEAD)</summary>
     [SyncVar]
     private float currentSP;
-    /// <summary>Current HP property (Everyone can get, only Server can set)</summary>
+    /// <summary>Current HP property (Everyone can get, only Server can set in <see cref="SetCurrentSP(float)"/>)</summary>
     public float CurrentSP
     {
         get { return currentSP; }
@@ -84,7 +87,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set current SP to " + value);
+                Debug.Log("Client tried to set current SP to " + value, this.gameObject);
                 return;
             }
 
@@ -93,14 +96,56 @@ public abstract class AEntity : NetworkBehaviour
             AfterCurrentSPChanged();
         }
     }
-    /// <summary>Player Armor property</summary>
-    protected float PlayerArmor { get { return 0f; } }
-    /// <summary>Chaser Armor property</summary>
-    protected float ChaserArmor { get { return 50f; } }
+
+    /// <summary>Default variable of Player armor. 
+    /// If you want to change the current armor of player use <see cref="CurrentArmor"/> instead. (DO NOT USE! USE <see cref="PlayerArmor"/> INSTEAD)</summary>
+    [SyncVar]
+    private float playerArmor = 0f;
+    /// <summary>Player Armor property. Please change current armor in <see cref="CurrentArmor"/>. (Everyone can get, only Server can set in <see cref="SetDefaultPlayerArmor(float)"/>)</summary>
+    public float PlayerArmor
+    {
+        get { return playerArmor; }
+        private set
+        {
+            if (!isServer)
+            {
+                Debug.Log("Client tried to set default value of Player Armor to " + value, this.gameObject);
+                return;
+            }
+
+            BeforeDefaultPlayerArmorChanged();
+            playerArmor = value;
+            AfterDefaultPlayerArmorChanged();
+        }
+    }
+
+    /// <summary>Default variable of Chaser armor. 
+    /// If you want to change the current armor of chaser use <see cref="CurrentArmor"/> instead. (DO NOT USE! USE <see cref="ChaserArmor"/> INSTEAD)</summary>
+    [SyncVar]
+    private float chaserArmor = 50f;
+    /// <summary>Chaser Armor property. Please change current armor in <see cref="CurrentArmor"/>. (Everyone can get, only Server can set in <see cref="SetDefaultChaserArmor(float)"/>)</summary>
+    public float ChaserArmor
+    {
+        get { return chaserArmor; }
+        private set
+        {
+            if (!isServer)
+            {
+                Debug.Log("Client tried to set default value of chaser Armor to " + value, this.gameObject);
+                return;
+            }
+
+            BeforeDefaultChaserArmorChanged();
+            playerArmor = value;
+            AfterDefaultChaserArmorChanged();
+        }
+
+    }
+
     /// <summary>Current Armor variable (DO NOT USE! USE <see cref="CurrentArmor"/> INSTEAD)</summary>
     [SyncVar]
     private float currentArmor;
-    /// <summary>Current Armor property (Everyone can get, only Server can set)</summary>
+    /// <summary>Current Armor property (Everyone can get, only Server can set in <see cref="SetCurrentArmor(float)"/>)</summary>
     public float CurrentArmor
     {
         get
@@ -111,7 +156,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set current armor to " + value);
+                Debug.Log("Client tried to set current armor to " + value, this.gameObject);
                 return;
             }
             BeforeCurrentArmorChanged();
@@ -119,12 +164,11 @@ public abstract class AEntity : NetworkBehaviour
             AfterCurrentArmorChanged();
         }
     }
-    /// <summary>Chaser variable (DO NOT USE! USE <see cref="IsChaser"/> INSTEAD)</summary>
-    [SyncVar]
-    private bool isChaser = false;
+
     /// <summary>How often was player Chaser</summary>
     [SyncVar]
     private int chaserCount = 0;
+    /// <summary>Current Chaser count property (Everyone can get, only Server can set)</summary>
     public int ChaserCount
     {
         get { return chaserCount; }
@@ -132,7 +176,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set Chaser count to " + value);
+                Debug.Log("Client tried to set Chaser count to " + value, this.gameObject);
                 return;
             }
             BeforeChaserCountChanged();
@@ -140,9 +184,11 @@ public abstract class AEntity : NetworkBehaviour
             AfterChaserCountChanged();
         }
     }
+
     /// <summary>True if player was chaser last round</summary>
     [SyncVar]
     private bool wasChaserLastRound = false;
+    /// <summary>Was Chaser last round property (Everyone can get, only Server can set)</summary>
     public bool WasChaserLastRound
     {
         get { return wasChaserLastRound; }
@@ -150,7 +196,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set was chaser last round to " + value);
+                Debug.Log("Client tried to set was chaser last round to " + value, this.gameObject);
                 return;
             }
             BeforeLastRoundChaserChanged();
@@ -158,7 +204,11 @@ public abstract class AEntity : NetworkBehaviour
             AfterLastRoundChaserChanged();
         }
     }
-    /// <summary>Chaser property (Everyone can get, only Server can set)</summary>
+
+    /// <summary>Chaser variable (DO NOT USE! USE <see cref="IsChaser"/> INSTEAD)</summary>
+    [SyncVar]
+    private bool isChaser = false;
+    /// <summary>Chaser property (Everyone can get, only Server can set in <see cref="SetChaser(bool)"/>)</summary>
     public bool IsChaser
     {
         get { return isChaser; }
@@ -166,7 +216,7 @@ public abstract class AEntity : NetworkBehaviour
         {
             if (!isServer)
             {
-                Debug.Log("Client tried to set Chaser mode to " + value);
+                Debug.Log("Client tried to set Chaser mode to " + value, this.gameObject);
                 return;
             }
             BeforeChaserChanged();
@@ -211,12 +261,38 @@ public abstract class AEntity : NetworkBehaviour
         CurrentHP = _newCurrentHP;
     }
     /// <summary>
+    /// Set new max SP using Property (<see cref="MaxSP"/>).
+    /// </summary>
+    /// <param name="_newMaxSP">new max SP of player</param>
+    public void SetMaxSP (float _newMaxSP)
+    {
+        MaxSP = _newMaxSP;
+    }
+    /// <summary>
     /// Set new current SP using Property (<see cref="CurrentSP"/>)
     /// </summary>
-    /// <param name="_newCurrentSP"></param>
+    /// <param name="_newCurrentSP">new current SP of player</param>
     public void SetCurrentSP (float _newCurrentSP)
     {
         CurrentSP = _newCurrentSP;
+    }
+    /// <summary>
+    /// Set new player default player armor using Property (<see cref="PlayerArmor"/>).
+    /// Change Current armor in <see cref="SetCurrentArmor(float)"/>
+    /// </summary>
+    /// <param name="_newDefaultPlayerArmor">new player default player armor value</param>
+    public void SetDefaultPlayerArmor (float _newDefaultPlayerArmor)
+    {
+        PlayerArmor = _newDefaultPlayerArmor;
+    }
+    /// <summary>
+    /// Set new player default chaser armor using Property (<see cref="ChaserArmor"/>)
+    /// Change Current armor in <see cref="SetCurrentArmor(float)"/>
+    /// </summary>
+    /// <param name="_newDefaultPlayerArmor">new player default chaser armor value</param>
+    public void SetDefaultChaserArmor(float _newDefaultChaserArmor)
+    {
+        ChaserArmor = _newDefaultChaserArmor;
     }
     /// <summary>
     /// Set new current Armor using Property (<see cref="CurrentArmor"/>)
@@ -227,8 +303,9 @@ public abstract class AEntity : NetworkBehaviour
         CurrentArmor = _newCurrentArmor;
     }
     /// <summary>
-    /// Set Chaser using Property (<see cref="IsChaser"/>) This Function has to be called every round
+    /// Set Chaser using Property (<see cref="IsChaser"/>) This Function has to be called every round for each player!!!
     /// </summary>
+    /// <exception cref="System.NotImplementedException"/>
     /// <param name="_isChaser">chaser value</param>
     public void SetChaser(bool _isChaser)
     {
@@ -240,11 +317,11 @@ public abstract class AEntity : NetworkBehaviour
             WasChaserLastRound = false;
             return;
         }
-        // if both values are equal and is true, something went wrong
+        // if both values are true, something went wrong
         if (IsChaser == _isChaser &&
             _isChaser == true)
         {
-            Debug.Log("This message should not appear!");
+            Debug.LogException(new System.NotImplementedException("This message should not appear! This Player is chaser two times in a row"), this.gameObject);
         }
 
         // set new chaser status
@@ -309,6 +386,24 @@ public abstract class AEntity : NetworkBehaviour
     /// </summary>
     public virtual void AfterCurrentSPChanged() { }
     #endregion
+    #region Default Armor Changed    
+    /// <summary>
+    /// Function is called before players default value for Player Armor is set
+    /// </summary>
+    public virtual void BeforeDefaultPlayerArmorChanged() { }
+    /// <summary>
+    /// Function is called after players default value for Player Armor was set
+    /// </summary>
+    public virtual void AfterDefaultPlayerArmorChanged() { }
+    /// <summary>
+    /// Function is called before players default value for Chaser Armor is set
+    /// </summary>
+    public virtual void BeforeDefaultChaserArmorChanged() { }
+    /// <summary>
+    /// Function is called after players default value for Chaser Armor was set
+    /// </summary>
+    public virtual void AfterDefaultChaserArmorChanged() { }
+    #endregion
     #region Current Armor changed
     /// <summary>
     /// Function is called before players Current armor is set
@@ -328,12 +423,15 @@ public abstract class AEntity : NetworkBehaviour
             if (CurrentArmor != ChaserArmor)
             {
                 // if not throw new exception
-                throw new System.NotImplementedException(
-                    "In Chaser Mode, Current Armor has to be "
-                    + ChaserArmor
-                    + ". Your Armor is "
-                    + CurrentArmor
-                    + ".");
+                Debug.LogException(
+                    new System.NotImplementedException(
+                        "In Chaser Mode, Current Armor has to be "
+                        + ChaserArmor
+                        + ". Your Armor is "
+                        + CurrentArmor
+                        + ".")
+                        );
+
             }
         }
 
@@ -392,7 +490,11 @@ public abstract class AEntity : NetworkBehaviour
             CurrentArmor = PlayerArmor;
     }
     #endregion
+    #endregion
 
+    /// <summary>
+    /// Initializes this instance
+    /// </summary>
     protected virtual void Initialize()
     {
         m_rigidbody = GetComponent<Rigidbody>();
@@ -404,6 +506,5 @@ public abstract class AEntity : NetworkBehaviour
     {
 
     }
-    #endregion
 
 }
